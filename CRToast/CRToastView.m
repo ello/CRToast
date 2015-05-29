@@ -197,10 +197,18 @@ static CGFloat CRCenterXForActivityIndicatorWithAlignment(CRToastAccessoryViewAl
 
 - (void)setToast:(CRToast *)toast {
     _toast = toast;
-    _label.text = toast.text;
-    _label.font = toast.font;
-    _label.textColor = toast.textColor;
-    _label.textAlignment = toast.textAlignment;
+    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+    paragraphStyle.alignment = toast.textAlignment;
+    paragraphStyle.lineSpacing = 8.0f;
+
+    NSRange textRange = NSMakeRange(0, toast.text.length);
+
+    NSMutableAttributedString *text = [[NSMutableAttributedString alloc] initWithString:toast.text];
+    [text addAttribute:NSFontAttributeName value:toast.font range:textRange];
+    [text addAttribute:NSForegroundColorAttributeName value:toast.textColor range:textRange];
+    [text addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:textRange];
+
+    _label.attributedText = text;
     _label.numberOfLines = toast.textMaxNumberOfLines;
     _label.shadowOffset = toast.textShadowOffset;
     _label.shadowColor = toast.textShadowColor;
